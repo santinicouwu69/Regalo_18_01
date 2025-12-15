@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi niña</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+
+    /* CANVAS: capa base */
+    #birthday {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    /* CONTENEDOR */
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* MARCO DECORATIVO ALREDEDOR DEL TEXTO */
+    .text-frame {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9;
+      padding: 120px 320px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 30px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+      box-shadow: 
+        0 0 30px rgba(255, 215, 0, 0.3),
+        inset 0 0 30px rgba(255, 255, 255, 0.1);
+      animation: frameGlow 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes frameGlow {
+      0%, 100% {
+        border-color: rgba(255, 215, 0, 0.5);
+        box-shadow: 
+          0 0 30px rgba(255, 215, 0, 0.4),
+          inset 0 0 30px rgba(255, 255, 255, 0.1);
+      }
+      50% {
+        border-color: rgba(255, 192, 203, 0.5);
+        box-shadow: 
+          0 0 40px rgba(255, 192, 203, 0.5),
+          inset 0 0 40px rgba(255, 192, 203, 0.1);
+      }
+    }
+
+    /* TEXTO: centrado con animación de latidos */
+    .text {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      pointer-events: none;
+      text-align: center;
+    }
+
+    .text h1,
+    .text h2 {
+      color: white;
+      font-family: "Georgia", serif;
+      text-shadow: 0 0 20px rgba(255,255,255,.8),
+                   0 0 40px rgba(255,255,255,.5),
+                   0 0 60px rgba(255,200,200,.3);
+    }
+
+    .text h1 {
+      font-size: 4rem;
+      margin-bottom: 15px;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    .text h2 {
+      font-size: 2.5rem;
+      font-style: italic;
+      animation: heartbeat 1.5s ease-in-out infinite;
+      animation-delay: 0.1s;
+    }
+
+    /* Animación de latidos */
+    @keyframes heartbeat {
+      0%, 100% {
+        transform: scale(1);
+      }
+      10% {
+        transform: scale(1.1);
+      }
+      20% {
+        transform: scale(1);
+      }
+      30% {
+        transform: scale(1.1);
+      }
+      40% {
+        transform: scale(1);
+      }
+    }
+
+    /* IMÁGENES EN LAS ESQUINAS - CIRCULARES CON BORDES BRILLANTES */
+    .corner-image {
+      position: fixed;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid white;
+      z-index: 10;
+      animation: float 3s ease-in-out infinite, colorfulGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes colorfulGlow {
+      0% {
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.8),
+                    0 0 50px rgba(255, 0, 0, 0.5);
+        border-color: rgba(255, 100, 100, 1);
+      }
+      25% {
+        box-shadow: 0 0 30px rgba(0, 255, 0, 0.8),
+                    0 0 50px rgba(0, 255, 0, 0.5);
+        border-color: rgba(100, 255, 100, 1);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(0, 100, 255, 0.8),
+                    0 0 50px rgba(0, 100, 255, 0.5);
+        border-color: rgba(100, 150, 255, 1);
+      }
+      75% {
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.8),
+                    0 0 50px rgba(255, 0, 255, 0.5);
+        border-color: rgba(255, 100, 255, 1);
+      }
+      100% {
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.8),
+                    0 0 50px rgba(255, 0, 0, 0.5);
+        border-color: rgba(255, 100, 100, 1);
+      }
+    }
+
+    .corner-top-left {
+      top: 30px;
+      left: 30px;
+    }
+
+    .corner-top-right {
+      top: 30px;
+      right: 30px;
+      animation-delay: 0.5s, 1s;
+    }
+
+    .corner-bottom-left {
+      bottom: 30px;
+      left: 30px;
+      animation-delay: 1s, 2s;
+    }
+
+    .corner-bottom-right {
+      bottom: 30px;
+      right: 30px;
+      animation-delay: 1.5s, 3s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    /* EMOJIS ANIMADOS - DESLIZÁNDOSE POR LA PANTALLA */
+    .emoji {
+      position: fixed;
+      font-size: 3rem;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    /* Emojis que se deslizan de izquierda a derecha */
+    .emoji.slide-right {
+      animation: slideRight 8s linear infinite;
+    }
+
+    /* Emojis que se deslizan de derecha a izquierda */
+    .emoji.slide-left {
+      animation: slideLeft 8s linear infinite;
+    }
+
+    /* Emojis que caen desde arriba */
+    .emoji.fall-down {
+      animation: fallDown 10s linear infinite;
+    }
+
+    /* Emojis que suben desde abajo */
+    .emoji.rise-up {
+      animation: riseUp 10s linear infinite;
+    }
+
+    .emoji:nth-child(1) { animation-delay: 0s; }
+    .emoji:nth-child(2) { animation-delay: 2s; }
+    .emoji:nth-child(3) { animation-delay: 4s; }
+    .emoji:nth-child(4) { animation-delay: 1s; }
+    .emoji:nth-child(5) { animation-delay: 3s; }
+    .emoji:nth-child(6) { animation-delay: 5s; }
+    .emoji:nth-child(7) { animation-delay: 1.5s; }
+    .emoji:nth-child(8) { animation-delay: 3.5s; }
+
+    @keyframes slideRight {
+      0% {
+        left: -10%;
+        top: 20%;
+        transform: rotate(0deg);
+      }
+      50% {
+        top: 30%;
+        transform: rotate(180deg);
+      }
+      100% {
+        left: 110%;
+        top: 20%;
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes slideLeft {
+      0% {
+        right: -10%;
+        top: 60%;
+        transform: rotate(0deg);
+      }
+      50% {
+        top: 50%;
+        transform: rotate(-180deg);
+      }
+      100% {
+        right: 110%;
+        top: 60%;
+        transform: rotate(-360deg);
+      }
+    }
+
+    @keyframes fallDown {
+      0% {
+        top: -10%;
+        left: 30%;
+        transform: rotate(0deg) scale(0.5);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.9;
+        transform: rotate(45deg) scale(1);
+      }
+      90% {
+        opacity: 0.9;
+        transform: rotate(315deg) scale(1);
+      }
+      100% {
+        top: 110%;
+        left: 40%;
+        transform: rotate(360deg) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    @keyframes riseUp {
+      0% {
+        bottom: -10%;
+        right: 35%;
+        transform: rotate(0deg) scale(0.5);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.9;
+        transform: rotate(-45deg) scale(1);
+      }
+      90% {
+        opacity: 0.9;
+        transform: rotate(-315deg) scale(1);
+      }
+      100% {
+        bottom: 110%;
+        right: 30%;
+        transform: rotate(-360deg) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    /* BOTONES DE MÚSICA Y SORPRESA */
+    .control-button {
+      position: fixed;
+      z-index: 100;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 3px solid white;
+      cursor: pointer;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,200,200,0.9));
+      box-shadow: 0 0 20px rgba(255,255,255,.8);
+      transition: all 0.3s;
+      animation: buttonPulse 2s ease-in-out infinite;
+    }
+
+    .control-button:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 30px rgba(255,255,255,1);
+    }
+
+    @keyframes buttonPulse {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(255,255,255,.8);
+      }
+      50% {
+        box-shadow: 0 0 35px rgba(255,200,200,1);
+      }
+    }
+
+    #music-button {
+      bottom: 100px;
+      right: 30px;
+    }
+
+    #surprise-button {
+      bottom: 100px;
+      left: 30px;
+    }
+
+    .control-button.hidden {
+      display: none;
+    }
+
+    /* MODAL DE SORPRESA */
+    #surprise-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #surprise-modal.show {
+      display: flex;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(255,192,203,0.95), rgba(255,105,180,0.95));
+      padding: 40px;
+      border-radius: 30px;
+      text-align: center;
+      max-width: 500px;
+      border: 4px solid white;
+      box-shadow: 0 0 50px rgba(255,192,203,0.8);
+      animation: modalSlide 0.5s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from {
+        transform: scale(0.5) translateY(-100px);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-content h3 {
+      font-size: 2.5rem;
+      color: white;
+      font-family: Georgia, serif;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .modal-content p {
+      font-size: 1.3rem;
+      color: white;
+      font-family: Georgia, serif;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    #close-modal {
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      background: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-family: Georgia, serif;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    #close-modal:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .text h1 {
+        font-size: 2.5rem;
+      }
+
+      .text h2 {
+        font-size: 1.8rem;
+      }
+
+      .text-frame {
+        padding: 30px 40px;
+      }
+
+      .corner-image {
+        width: 120px;
+        height: 120px;
+      }
+
+      .corner-top-left,
+      .corner-top-right {
+        top: 15px;
+      }
+
+      .corner-bottom-left,
+      .corner-bottom-right {
+        bottom: 15px;
+      }
+
+      .corner-top-left,
+      .corner-bottom-left {
+        left: 15px;
+      }
+
+      .corner-top-right,
+      .corner-bottom-right {
+        right: 15px;
+      }
+
+      .emoji {
+        font-size: 2rem;
+      }
+
+      #music-button {
+        bottom: 80px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+
+      #surprise-button {
+        bottom: 80px;
+        left: 15px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+
+      .modal-content {
+        max-width: 90%;
+        padding: 30px 20px;
+      }
+
+      .modal-content h3 {
+        font-size: 2rem;
+      }
+
+      .modal-content p {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <canvas id="birthday"></canvas>
+
+    <!-- MARCO DECORATIVO -->
+    <div class="text-frame"></div>
+
+    <!-- TEXTO CENTRADO -->
+    <div class="text">
+      <h1>Feliz cumpleaños</h1>
+      <h2>Mi niña</h2>
+    </div>
+
+    <!-- IMÁGENES EN LAS 4 ESQUINAS -->
+    <img src="Maye.jpg" alt="Foto 1" class="corner-image corner-top-left">
+    <img src="Mifav.jpg" alt="Foto 2" class="corner-image corner-top-right">
+    <img src="Mayer.jpg" alt="Foto 3" class="corner-image corner-bottom-left">
+    <img src="mayerl.jpg" alt="Foto 4" class="corner-image corner-bottom-right">
+
+    <!-- EMOJIS ANIMADOS -->
+    <div class="emoji slide-right">💕</div>
+    <div class="emoji slide-left">🎉</div>
+    <div class="emoji fall-down">🎂</div>
+    <div class="emoji rise-up">💖</div>
+    <div class="emoji slide-right">🎈</div>
+    <div class="emoji slide-left">❤️</div>
+    <div class="emoji fall-down">🎁</div>
+    <div class="emoji rise-up">🌹</div>
+
+    <!-- BOTÓN DE SORPRESA -->
+    <button id="surprise-button" class="control-button">🎁</button>
+
+    <!-- BOTÓN DE MÚSICA -->
+    <button id="music-button" class="control-button">🎵</button>
+
+    <!-- MODAL DE SORPRESA -->
+    <div id="surprise-modal">
+      <div class="modal-content">
+        <h3>💖 Mi Niña Linda 💖</h3>
+        <p>
+          Eres la persona más especial e importante hoy en mi vida. 
+          Cada día a tu lado es un regalo que atesoro. 
+          Que este nuevo año esté lleno de amor, 
+          alegría y todos tus sueños hechos realidad.
+          <br><br>
+          ¡Te amo con todo mi corazón! 💕
+          Te deseo lo mejor en tu cumpleaños y siempre.
+          Un fuerte abrazo y  un enorme beso desde la distancia.
+        </p>
+        <button id="close-modal">Cerrar ❤️</button>
+      </div>
+    </div>
+
+    <audio id="bg-music" loop>
+      <source src="CumpleañosFeliz.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    // Helper functions
+    const PI2 = Math.PI * 2
+    const random = (min, max) => Math.random() * (max - min + 1) + min | 0
+    const timestamp = _ => new Date().getTime()
+
+    // Container
+    class Birthday {
+      constructor() {
+        this.resize()
+        this.fireworks = []
+        this.counter = 0
+      }
+      
+      resize() {
+        this.width = canvas.width = window.innerWidth
+        let center = this.width / 2 | 0
+        this.spawnA = center - center / 4 | 0
+        this.spawnB = center + center / 4 | 0
+        
+        this.height = canvas.height = window.innerHeight
+        this.spawnC = this.height * .1
+        this.spawnD = this.height * .5
+      }
+      
+      onClick(evt) {
+        let x = evt.clientX || evt.touches && evt.touches[0].pageX
+        let y = evt.clientY || evt.touches && evt.touches[0].pageY
+        
+        let count = random(3,5)
+        for(let i = 0; i < count; i++) {
+          this.fireworks.push(new Firework(
+            random(this.spawnA, this.spawnB),
+            this.height,
+            x,
+            y,
+            random(0, 260),
+            random(30, 110)
+          ))
+        }
+        this.counter = -1
+      }
+      
+      update(delta) {
+        ctx.globalCompositeOperation = 'hard-light'
+        ctx.fillStyle = `rgba(20,20,20,${ 7 * delta })`
+        ctx.fillRect(0, 0, this.width, this.height)
+
+        ctx.globalCompositeOperation = 'lighter'
+        for (let firework of this.fireworks) firework.update(delta)
+
+        this.counter += delta * 3
+        if (this.counter >= 1) {
+          this.fireworks.push(new Firework(
+            random(this.spawnA, this.spawnB),
+            this.height,
+            random(0, this.width),
+            random(this.spawnC, this.spawnD),
+            random(0, 360),
+            random(30, 110)
+          ))
+          this.counter = 0
+        }
+
+        if (this.fireworks.length > 1000) {
+          this.fireworks = this.fireworks.filter(firework => !firework.dead)
+        }
+      }
+    }
+
+    class Firework {
+      constructor(x, y, targetX, targetY, shade, offsprings) {
+        this.dead = false
+        this.offsprings = offsprings
+        this.x = x
+        this.y = y
+        this.targetX = targetX
+        this.targetY = targetY
+        this.shade = shade
+        this.history = []
+      }
+      
+      update(delta) {
+        if (this.dead) return
+
+        let xDiff = this.targetX - this.x
+        let yDiff = this.targetY - this.y
+        
+        if (Math.abs(xDiff) > 3 || Math.abs(yDiff) > 3) {
+          this.x += xDiff * 2 * delta
+          this.y += yDiff * 2 * delta
+
+          this.history.push({ x: this.x, y: this.y })
+          if (this.history.length > 20) this.history.shift()
+        } else {
+          if (this.offsprings && !this.madeChilds) {
+            let babies = this.offsprings / 2
+            for (let i = 0; i < babies; i++) {
+              let targetX = this.x + this.offsprings * Math.cos(PI2 * i / babies) | 0
+              let targetY = this.y + this.offsprings * Math.sin(PI2 * i / babies) | 0
+              birthday.fireworks.push(new Firework(this.x, this.y, targetX, targetY, this.shade, 0))
+            }
+          }
+          this.madeChilds = true
+          this.history.shift()
+        }
+        
+        if (this.history.length === 0) {
+          this.dead = true
+        } else if (this.offsprings) { 
+          for (let i = 0; i < this.history.length; i++) {
+            let point = this.history[i]
+            ctx.beginPath()
+            ctx.fillStyle = 'hsl(' + this.shade + ',100%,' + i + '%)'
+            ctx.arc(point.x, point.y, 1, 0, PI2, false)
+            ctx.fill()
+          } 
+        } else {
+          ctx.beginPath()
+          ctx.fillStyle = 'hsl(' + this.shade + ',100%,50%)'
+          ctx.arc(this.x, this.y, 1, 0, PI2, false)
+          ctx.fill()
+        }
+      }
+    }
+
+    // Inicialización
+    let canvas = document.getElementById('birthday')
+    let ctx = canvas.getContext('2d')
+    let then = timestamp()
+    let birthday = new Birthday()
+
+    // Control de música
+    const music = document.getElementById('bg-music')
+    const musicButton = document.getElementById('music-button')
+    let isPlaying = false
+
+    musicButton.addEventListener('click', (e) => {
+      e.stopPropagation()
+      if (isPlaying) {
+        music.pause()
+        musicButton.textContent = '🎵'
+        isPlaying = false
+      } else {
+        music.play()
+        musicButton.textContent = '⏸️'
+        isPlaying = true
+      }
+    })
+
+    // Control de sorpresa
+    const surpriseButton = document.getElementById('surprise-button')
+    const surpriseModal = document.getElementById('surprise-modal')
+    const closeModal = document.getElementById('close-modal')
+
+    surpriseButton.addEventListener('click', (e) => {
+      e.stopPropagation()
+      surpriseModal.classList.add('show')
+    })
+
+    closeModal.addEventListener('click', () => {
+      surpriseModal.classList.remove('show')
+    })
+
+    surpriseModal.addEventListener('click', (e) => {
+      if (e.target === surpriseModal) {
+        surpriseModal.classList.remove('show')
+      }
+    })
+
+    // Event listeners
+    window.onresize = () => birthday.resize()
+    document.onclick = evt => birthday.onClick(evt)
+    document.ontouchstart = evt => birthday.onClick(evt)
+
+    // Loop de animación
+    ;(function loop(){
+      requestAnimationFrame(loop)
+      let now = timestamp()
+      let delta = now - then
+      then = now
+      birthday.update(delta / 1000)
+    })()
+  </script>
+</body>
+</html>
